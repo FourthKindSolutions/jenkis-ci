@@ -1,0 +1,16 @@
+#! /usr/bin/bash
+
+echo \"timestamp\",\"package name\",\"current version\",\"update version\"
+yum -q check-update| while read i
+do
+    i=$(echo $i) #this strips off yum's irritating use of whitespace
+    if [ "${i}x" != "x" ]
+    then
+        TIMESTAMP=$( date +%D" "%r )
+        UVERSION=${i#*\ }
+        UVERSION=${UVERSION%\ *}
+        PNAME=${i%%\ *}
+        PNAME=${PNAME%.*}
+        echo \"$TIMESTAMP\",$(rpm -q "${PNAME}" --qf '"%{NAME}","%{VERSION}","')${UVERSION}\" >> `hostname`
+    fi
+done
